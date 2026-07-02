@@ -660,24 +660,32 @@ body {
     border-radius: 999px;
     box-shadow: 0 12px 30px rgba(46,157,247,0.20);
     z-index: 20010; /* above game overlays */
-    display: flex;
+    display: block;
     align-items: center;
     gap: 12px;
     pointer-events: auto;
     backdrop-filter: blur(6px) saturate(120%);
 }
 
+.cw-footer-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.cw-footer-link:hover,
+.cw-footer-link:focus-visible {
+    text-decoration: underline;
+}
+
 .cw-footer .cw-footer-text {
     font-size: 14px;
     font-weight: 600;
     margin-right: 6px;
-}
-
-.cw-footer .cw-footer-link {
-    color: #ffffff;
-    text-decoration: underline;
-    font-weight: 700;
-    font-size: 14px;
 }
 
 @media (max-width: 520px) {
