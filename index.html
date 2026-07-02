@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Water Drop Game</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Montserrat chosen to evoke Proxima Nova / Avenir brand feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="game-wrapper">
@@ -26,6 +28,12 @@
                     Time Left: <span id="timer">30</span>s
                 </div>
                 <button id="start-btn">Start Game</button>
+                <button id="reset-btn">Reset</button>
+                <div class="difficulty-group" role="tablist" aria-label="Difficulty">
+                    <button id="difficulty-easy" class="difficulty-btn" data-difficulty="easy" role="tab" aria-selected="false">Easy</button>
+                    <button id="difficulty-normal" class="difficulty-btn active" data-difficulty="normal" role="tab" aria-selected="true">Normal</button>
+                    <button id="difficulty-hard" class="difficulty-btn" data-difficulty="hard" role="tab" aria-selected="false">Hard</button>
+                </div>
             </div>
         </div>
         
@@ -37,5 +45,13 @@
     </div>
     
     <script src="script.js"></script>
+    <footer class="cw-footer" role="contentinfo" aria-label="charity links">
+        <div class="cw-footer-inner">
+            <span class="cw-footer-text">Support clean water initiatives:</span>
+            <a class="cw-footer-link" href="https://www.charitywater.org/" target="_blank" rel="noopener noreferrer">charity: water</a>
+            <span aria-hidden="true">•</span>
+            <a class="cw-footer-link" href="https://donate.charitywater.org/" target="_blank" rel="noopener noreferrer">Donate</a>
+        </div>
+    </footer>
 </body>
 </html>

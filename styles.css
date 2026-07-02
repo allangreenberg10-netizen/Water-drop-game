@@ -34,7 +34,7 @@ html, body {
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: Montserrat, Arial, sans-serif;
 }
 
 .game-wrapper {
@@ -201,7 +201,107 @@ body {
 }
 
 #start-btn:hover {
-    background-color: #45a049;
+    background-color: #1c87e8;
+}
+
+/* Reset button: styled to match Start button */
+#reset-btn {
+    padding: 8px 16px;
+    background-color: #2E9DF7; /* charity: water blue */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 8px 18px rgba(46,157,247,0.18);
+}
+
+#reset-btn:hover {
+    background-color: #1c87e8;
+}
+
+/* Difficulty group styling */
+.difficulty-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.difficulty-btn {
+    padding: 6px 10px;
+    background: transparent;
+    border: 2px solid rgba(0,0,0,0.06);
+    border-radius: 6px;
+    color: #2E9DF7;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.difficulty-btn.active {
+    background: #2E9DF7;
+    color: #fff;
+    border-color: rgba(0,0,0,0.06);
+    box-shadow: 0 8px 18px rgba(46,157,247,0.18);
+}
+
+@media (max-width: 520px) {
+    .difficulty-group { display: none; }
+}
+
+/* Button press micro-interaction */
+.btn-press {
+    animation: btnPress 220ms ease;
+}
+
+@keyframes btnPress {
+    0% { transform: translateY(0) scale(1); box-shadow: 0 8px 18px rgba(0,0,0,0.08); }
+    50% { transform: translateY(2px) scale(0.98); box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
+    100% { transform: translateY(0) scale(1); box-shadow: 0 8px 18px rgba(0,0,0,0.08); }
+}
+
+/* Full-screen flash overlay for emphasis when buttons are clicked */
+.screen-flash {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20005;
+    opacity: 0.0;
+    animation: screenFlash 360ms ease forwards;
+}
+
+@keyframes screenFlash {
+    0% { opacity: 0; }
+    10% { opacity: 0.25; }
+    60% { opacity: 0.12; }
+    100% { opacity: 0; }
+}
+
+/* Large difficulty label that briefly appears when a difficulty is selected */
+.difficulty-flash {
+    position: fixed;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+    z-index: 20020;
+    pointer-events: none;
+    font-family: Montserrat, Arial, sans-serif;
+    font-weight: 800;
+    font-size: 48px;
+    padding: 18px 28px;
+    border-radius: 12px;
+    color: #ffffff;
+    opacity: 0;
+    animation: difficultyPop 520ms cubic-bezier(.2,.9,.2,1) forwards;
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.28);
+}
+
+@keyframes difficultyPop {
+    0% { opacity: 0; transform: translate(-50%, -46%) scale(0.94); }
+    30% { opacity: 0.95; transform: translate(-50%, -50%) scale(1.06); }
+    100% { opacity: 0; transform: translate(-50%, -54%) scale(0.98); }
 }
 
 .score {
@@ -212,7 +312,7 @@ body {
 
 #timer-container {
     position: static;
-    font-family: 'Arial', sans-serif;
+    font-family: Montserrat, 'Arial', sans-serif;
     font-size: 24px;
     font-weight: bold;
     color: #333;
@@ -311,6 +411,7 @@ body {
 }
 
 .game-title {
+    font-family: Montserrat, Avenir, Proxima Nova, Arial, sans-serif;
     font-size: 56px;
     margin-top: 0;
     margin-bottom: 4px;
@@ -512,8 +613,8 @@ body {
 
 .top-brand .brand-text {
     color: #000; /* black text */
-    font-weight: 400; /* normal weight */
-    font-family: Avenir, Proxima Nova, Arial, sans-serif;
+    font-weight: 600; /* slightly bolder for brand */
+    font-family: Montserrat, Avenir, Proxima Nova, Arial, sans-serif;
     font-size: 22px;
     letter-spacing: 0.5px;
 }
@@ -534,4 +635,41 @@ body {
 
 @media (max-width: 600px) {
     .vertical-progress { right: 8px; width: 16px; height: 40%; }
+}
+
+/* Visible footer linking to charity: water and donation page */
+.cw-footer {
+    position: fixed;
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #2E9DF7, #8BD1CB);
+    color: #ffffff;
+    padding: 10px 16px;
+    border-radius: 999px;
+    box-shadow: 0 12px 30px rgba(46,157,247,0.20);
+    z-index: 20010; /* above game overlays */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    pointer-events: auto;
+    backdrop-filter: blur(6px) saturate(120%);
+}
+
+.cw-footer .cw-footer-text {
+    font-size: 14px;
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.cw-footer .cw-footer-link {
+    color: #ffffff;
+    text-decoration: underline;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+@media (max-width: 520px) {
+    .cw-footer { padding: 8px 12px; gap: 8px; bottom: 10px; }
+    .cw-footer .cw-footer-text { display: none; }
 }
