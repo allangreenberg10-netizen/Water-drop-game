@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Drop Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-wrapper">
+        <header class="hero">
+            <div class="hero-inner">
+                <h1 class="game-title">Water Drop</h1>
+                <div class="top-brand">
+                    <img src="img/water-can-transparent.png" alt="jerry can" class="brand-can">
+                    <span class="brand-text">charity: water</span>
+                </div>
+                <p class="game-tagline">Catch the good drops, avoid the bad ones!</p>
+            </div>
+            <div class="hero-ribbon">Make every drop count</div>
+        </header>
+        <div class="score-panel">
+            <div class="panel-right">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div id="timer-container">
+                    Time Left: <span id="timer">30</span>s
+                </div>
+                <button id="start-btn">Start Game</button>
+            </div>
+        </div>
+        
+        <div id="game-container">
+            <div class="vertical-progress" aria-hidden="true">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
