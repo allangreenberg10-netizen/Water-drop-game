@@ -9,6 +9,9 @@ let timerElement = null;
 let scoreElement = null;
 let bubblesCreated = false;
 
+// Winning score threshold
+const WIN_SCORE = 25;
+
 // Difficulty / gameplay tuning variables
 let difficulty = 'normal';
 let spawnIntervalMs = 500;
@@ -43,7 +46,7 @@ function createBackgroundBubbles(count = 10) {
 function updateProgress() {
   const fill = document.getElementById('progress-fill');
   if (!fill) return;
-  const percent = Math.min(100, Math.round((score / 20) * 100));
+  const percent = Math.min(100, Math.round((score / WIN_SCORE) * 100));
   fill.style.height = percent + '%';
 }
 
@@ -173,10 +176,11 @@ function endGame() {
   gameRunning = false;
   let message;
   let type;
-  if (score >= 20) {
+  if (score >= WIN_SCORE) {
     const randomIndex = Math.floor(Math.random() * winningMessages.length);
     message = `🎉 ${winningMessages[randomIndex]} Final Score: ${score}`;
     type = 'win';
+      playCheerSound();
   } else {
     const randomIndex = Math.floor(Math.random() * losingMessages.length);
     message = `${losingMessages[randomIndex]} Final Score: ${score}`;
@@ -203,6 +207,89 @@ function showBanner(message, type = 'win') {
   document.body.appendChild(banner);
 }
 
+// Play cheering: prefer a provided audio element, fallback to synthesized applause
+function playCheerSound() {
+  try {
+    const audioEl = document.getElementById('cheer-audio');
+    if (audioEl && audioEl.src) {
+      // play provided file
+      audioEl.currentTime = 0;
+      const p = audioEl.play();
+      if (p && typeof p.then === 'function') p.catch(() => {});
+      return;
+    }
+
+    // Synthesize an applause-like sound using short noise bursts
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+
+    // helper to create a noise burst
+    function burst(start, length, pan, gain) {
+      const bufferSize = Math.floor(ctx.sampleRate * length);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1200 + Math.random() * 2000;
+      filter.Q.value = 0.9;
+
+      const gainNode = ctx.createGain();
+      gainNode.gain.setValueAtTime(0.0001, start);
+      gainNode.gain.exponentialRampToValueAtTime(gain, start + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, start + length);
+
+      const panner = ctx.createStereoPanner();
+      panner.pan.value = pan;
+
+      src.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(panner);
+      panner.connect(ctx.destination);
+
+      src.start(start);
+      src.stop(start + length + 0.02);
+    }
+
+    // schedule many small bursts across a short window to simulate crowd
+    const totalBursts = 22;
+    for (let i = 0; i < totalBursts; i++) {
+      const tOff = now + Math.random() * 0.9;
+      const len = 0.06 + Math.random() * 0.18;
+      const pan = -1 + Math.random() * 2;
+      const g = 0.02 + Math.random() * 0.08;
+      burst(tOff, len, pan, g);
+    }
+
+    // also add a subtle tonal uplift to give a celebratory feel
+    const tone = ctx.createOscillator();
+    const toneGain = ctx.createGain();
+    tone.type = 'sine';
+    tone.frequency.setValueAtTime(600, now + 0.05);
+    tone.frequency.exponentialRampToValueAtTime(1200, now + 0.5);
+    toneGain.gain.setValueAtTime(0.0001, now);
+    toneGain.gain.exponentialRampToValueAtTime(0.06, now + 0.05);
+    toneGain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+    tone.connect(toneGain);
+    toneGain.connect(ctx.destination);
+    tone.start(now);
+    tone.stop(now + 0.9);
+
+    // close context after it's done
+    setTimeout(() => {
+      try { ctx.close(); } catch (e) {}
+    }, 1400);
+  } catch (e) {
+    // fail silently
+    console.warn('cheer failed', e);
+  }
+}
+
 function createDrop() {
   const drop = document.createElement('div');
   const isBad = Math.random() < badDropChance;
@@ -225,11 +312,11 @@ function createDrop() {
   drop.style.animationDuration = `${dropFallDuration}s`;
   drop.addEventListener('click', () => {
     if (!drop.classList.contains('burst')) {
-      if (drop.dataset.bad === 'true') score = Math.max(0, score - 1);
-      else score++;
+    // Increment score for any drop popped (blue or red)
+    score++;
       if (scoreElement) scoreElement.textContent = score;
       updateProgress();
-      if (score >= 20 && gameRunning) {
+      if (score >= WIN_SCORE && gameRunning) {
         if (typeof dropMaker !== 'undefined') clearInterval(dropMaker);
         if (typeof countdown !== 'undefined') clearInterval(countdown);
         gameRunning = false;
@@ -237,7 +324,8 @@ function createDrop() {
         const winIndex = Math.floor(Math.random() * winningMessages.length);
         const winMessage = `🎉 ${winningMessages[winIndex]} Final Score: ${score}`;
         const fillEl = document.getElementById('progress-fill'); if (fillEl) fillEl.style.height = '100%';
-        showBanner(winMessage, 'win');
+          playCheerSound();
+          showBanner(winMessage, 'win');
         return;
       }
       playPopSound();
